@@ -11,6 +11,15 @@ import { Geopoint } from 'geofire-common';
 const expect = chai.expect;
 
 describe('GeoFire Tests:', () => {
+
+  const customData = {
+    key1: 'ONE',
+    key2: 2,
+    key3: {
+      key4: 'FOUR',
+    },
+  };
+
   // Reset the Firebase before each test
   beforeEach((done) => {
     beforeEachHelper(done);
@@ -55,7 +64,7 @@ describe('GeoFire Tests:', () => {
       geoFire.set('loc1', [0, 0]).then(() => {
         cl.x('p1');
 
-        return geoFire.set('loc2', [50, 50]);
+        return geoFire.set('loc2', [50, 50], customData);
       }).then(() => {
         cl.x('p2');
 
@@ -67,7 +76,7 @@ describe('GeoFire Tests:', () => {
       }).then((firebaseData) => {
         expect(firebaseData).to.deep.equal({
           'loc1': { '.priority': '7zzzzzzzzz', 'l': { '0': 0, '1': 0 }, 'g': '7zzzzzzzzz' },
-          'loc2': { '.priority': 'v0gs3y0zh7', 'l': { '0': 50, '1': 50 }, 'g': 'v0gs3y0zh7' },
+          'loc2': { '.priority': 'v0gs3y0zh7', 'l': { '0': 50, '1': 50 }, 'g': 'v0gs3y0zh7', ...customData },
           'loc3': { '.priority': '1bpbpbpbpb', 'l': { '0': -90, '1': -90 }, 'g': '1bpbpbpbpb' }
         });
 
@@ -75,26 +84,26 @@ describe('GeoFire Tests:', () => {
       }).catch(failTestOnCaughtError);
     });
 
-    it('set() handles decimal latitudes and longitudes', (done) => {
+    it('set() updates Firebase when adding new locations', (done) => {
       const cl = new Checklist(['p1', 'p2', 'p3', 'p4'], expect, done);
 
-      geoFire.set('loc1', [0.254, 0]).then(() => {
+      geoFire.set('loc1', [0, 0]).then(() => {
         cl.x('p1');
 
-        return geoFire.set('loc2', [50, 50.293403]);
+        return geoFire.set('loc2', [50, 50], customData);
       }).then(() => {
         cl.x('p2');
 
-        return geoFire.set('loc3', [-82.614, -90.938]);
+        return geoFire.set('loc3', [-90, -90]);
       }).then(() => {
         cl.x('p3');
 
         return getFirebaseData();
       }).then((firebaseData) => {
         expect(firebaseData).to.deep.equal({
-          'loc1': { '.priority': 'ebpcrypzxv', 'l': { '0': 0.254, '1': 0 }, 'g': 'ebpcrypzxv' },
-          'loc2': { '.priority': 'v0gu2qnx15', 'l': { '0': 50, '1': 50.293403 }, 'g': 'v0gu2qnx15' },
-          'loc3': { '.priority': '1cr648sfx4', 'l': { '0': -82.614, '1': -90.938 }, 'g': '1cr648sfx4' }
+          'loc1': { '.priority': '7zzzzzzzzz', 'l': { '0': 0, '1': 0 }, 'g': '7zzzzzzzzz' },
+          'loc2': { '.priority': 'v0gs3y0zh7', 'l': { '0': 50, '1': 50 }, 'g': 'v0gs3y0zh7', ...customData },
+          'loc3': { '.priority': '1bpbpbpbpb', 'l': { '0': -90, '1': -90 }, 'g': '1bpbpbpbpb' }
         });
 
         cl.x('p4');
@@ -107,7 +116,7 @@ describe('GeoFire Tests:', () => {
       geoFire.set('loc1', [0, 0]).then(() => {
         cl.x('p1');
 
-        return geoFire.set('loc2', [50, 50]);
+        return geoFire.set('loc2', [50, 50], customData);
       }).then(() => {
         cl.x('p2');
 
@@ -123,7 +132,7 @@ describe('GeoFire Tests:', () => {
       }).then((firebaseData) => {
         expect(firebaseData).to.deep.equal({
           'loc1': { '.priority': 's065kk0dc5', 'l': { '0': 2, '1': 3 }, 'g': 's065kk0dc5' },
-          'loc2': { '.priority': 'v0gs3y0zh7', 'l': { '0': 50, '1': 50 }, 'g': 'v0gs3y0zh7' },
+          'loc2': { '.priority': 'v0gs3y0zh7', 'l': { '0': 50, '1': 50 }, 'g': 'v0gs3y0zh7', ...customData },
           'loc3': { '.priority': '1bpbpbpbpb', 'l': { '0': -90, '1': -90 }, 'g': '1bpbpbpbpb' }
         });
 
@@ -137,7 +146,7 @@ describe('GeoFire Tests:', () => {
       geoFire.set('loc1', [0, 0]).then(() => {
         cl.x('p1');
 
-        return geoFire.set('loc2', [50, 50]);
+        return geoFire.set('loc2', [50, 50], customData);
       }).then(() => {
         cl.x('p2');
 
@@ -153,7 +162,7 @@ describe('GeoFire Tests:', () => {
       }).then((firebaseData) => {
         expect(firebaseData).to.deep.equal({
           'loc1': { '.priority': '7zzzzzzzzz', 'l': { '0': 0, '1': 0 }, 'g': '7zzzzzzzzz' },
-          'loc2': { '.priority': 'v0gs3y0zh7', 'l': { '0': 50, '1': 50 }, 'g': 'v0gs3y0zh7' },
+          'loc2': { '.priority': 'v0gs3y0zh7', 'l': { '0': 50, '1': 50 }, 'g': 'v0gs3y0zh7', ...customData },
           'loc3': { '.priority': '1bpbpbpbpb', 'l': { '0': -90, '1': -90 }, 'g': '1bpbpbpbpb' }
         });
 
@@ -299,15 +308,15 @@ describe('GeoFire Tests:', () => {
         'loc1': [0, 0],
         'loc2': [50, 50],
         'loc3': [-90, -90]
-      }).then(() => {
+      }, undefined, customData).then(() => {
         cl.x('p1');
 
         return getFirebaseData();
       }).then((firebaseData) => {
         expect(firebaseData).to.deep.equal({
-          'loc1': { '.priority': '7zzzzzzzzz', 'l': { '0': 0, '1': 0 }, 'g': '7zzzzzzzzz' },
-          'loc2': { '.priority': 'v0gs3y0zh7', 'l': { '0': 50, '1': 50 }, 'g': 'v0gs3y0zh7' },
-          'loc3': { '.priority': '1bpbpbpbpb', 'l': { '0': -90, '1': -90 }, 'g': '1bpbpbpbpb' }
+          'loc1': { '.priority': '7zzzzzzzzz', 'l': { '0': 0, '1': 0 }, 'g': '7zzzzzzzzz', ...customData },
+          'loc2': { '.priority': 'v0gs3y0zh7', 'l': { '0': 50, '1': 50 }, 'g': 'v0gs3y0zh7', ...customData },
+          'loc3': { '.priority': '1bpbpbpbpb', 'l': { '0': -90, '1': -90 }, 'g': '1bpbpbpbpb', ...customData }
         });
 
         cl.x('p2');
