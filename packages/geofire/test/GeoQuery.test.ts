@@ -1,9 +1,10 @@
+// @ts-nocheck
 /* tslint:disable:max-line-length */
 import * as chai from 'chai';
 import { GeoQuery,  } from '../src';
 
 import {
-  afterEachHelper, beforeEachHelper, Checklist, failTestOnCaughtError, geoFire, geoQueries, 
+  afterEachHelper, beforeEachHelper, Checklist, failTestOnCaughtError, geoFire, geoQueries,
   invalidQueryCriterias, validQueryCriterias, wait
 } from './common';
 import { validateCriteria } from '../src/GeoQuery';

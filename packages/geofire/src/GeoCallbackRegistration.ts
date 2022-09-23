@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 /**
  * Creates a GeoCallbackRegistration instance.
  */

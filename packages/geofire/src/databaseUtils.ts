@@ -49,3 +49,29 @@ export function geoFireGetKey(snapshot: DataSnapshot): string {
 
   return key;
 }
+
+export type CustomData = { [property: string]: string | number | CustomData };
+
+/**
+ * Gets the GeoFire object custom data.
+ */
+ const objectKeys = <T>(data: T): (keyof T)[] => {
+   return Object.keys(data) as (keyof T)[];
+ };
+
+ export function getCustomData(snapshot: DataSnapshot): CustomData {
+   const customData: CustomData = {};
+   let val = snapshot.val();
+
+   if (val) {
+     const keys = objectKeys(val);
+     for (let i = 0, iMax = keys.length; i < iMax; i++) {
+       const key = keys[i];
+       if (typeof key !== 'string') continue;
+       if (key === 'g' || key === 'l') continue;
+       customData[key] = val[key];
+     }
+   }
+
+   return customData;
+ }

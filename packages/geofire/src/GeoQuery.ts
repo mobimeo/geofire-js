@@ -1,14 +1,16 @@
+// @ts-nocheck
+
 import { GeoCallbackRegistration } from './GeoCallbackRegistration';
 import {
-  distanceBetween, geohashForLocation, geohashQueryBounds, validateLocation, 
+  distanceBetween, geohashForLocation, geohashQueryBounds, validateLocation,
   Geopoint, Geohash,GeohashRange
 } from 'geofire-common';
 import {
   decodeGeoFireObject, geoFireGetKey } from './databaseUtils';
 import * as GeoFireTypes from './GeoFireTypes';
-import { 
+import {
   DataSnapshot, orderByChild, DatabaseReference, query, startAt, endAt, off, child, get, Query, onChildAdded, onChildRemoved,
-  onChildChanged, onValue, Unsubscribe 
+  onChildChanged, onValue, Unsubscribe
 } from 'firebase/database';
 
 export interface QueryCriteria {

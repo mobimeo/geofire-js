@@ -1,4 +1,5 @@
 /* tslint:disable:max-line-length */
+// @ts-nocheck
 import * as chai from 'chai';
 import { initializeApp } from 'firebase/app';
 import { DatabaseReference, getDatabase, ref, push, remove, get, DataSnapshot } from 'firebase/database';

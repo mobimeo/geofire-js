@@ -11,9 +11,14 @@
  */
 import { GeoQuery, QueryCriteria } from './GeoQuery';
 import { geohashForLocation, validateLocation, validateKey, Geopoint } from 'geofire-common';
-import { decodeGeoFireObject, encodeGeoFireObject } from './databaseUtils';
+import { decodeGeoFireObject, encodeGeoFireObject, CustomData } from './databaseUtils';
 
 import { DatabaseReference, DataSnapshot, child, update, get } from 'firebase/database';
+
+interface LocationsWithCustomData {
+  locations: Record<string, Geopoint | null>;
+  customData?: CustomData;
+}
 
 /**
  * Creates a GeoFire instance.
@@ -39,7 +44,7 @@ export class GeoFire {
    * @param key The key of the location to retrieve.
    * @returns A promise that is fulfilled with the location of the given key.
    */
-  public get(key: string): Promise<Geopoint> {
+  public get(key: string): Promise<Geopoint | null> {
     validateKey(key);
     return get(child(this._firebaseRef, key)).then((dataSnapshot: DataSnapshot) => {
       const snapshotVal = dataSnapshot.val();
@@ -82,35 +87,52 @@ export class GeoFire {
    * @param location The [latitude, longitude] pair to add.
    * @returns A promise that is fulfilled when the write is complete.
    */
-  public set(keyOrLocations: string | any, location?: Geopoint): Promise<any> {
-    let locations;
+  public set(keyOrLocations: string | Record<string, Geopoint | null>, location?: Geopoint | null, customData?: CustomData): Promise<any> {
+    if(customData && typeof customData !== 'object'){
+      throw new Error('customData must be an Object');
+    }
+
+    let data: LocationsWithCustomData = {
+      locations: {},
+      customData,
+    };
+
     if (typeof keyOrLocations === 'string' && keyOrLocations.length !== 0) {
-      // If this is a set for a single location, convert it into a object
-      locations = {};
-      locations[keyOrLocations] = location;
+      if (location === undefined) {
+        throw new Error('location must be a valid location or null if keyOrLocations is a string')
+      }
+      data.locations[keyOrLocations] = location;
     } else if (typeof keyOrLocations === 'object') {
       if (typeof location !== 'undefined') {
         throw new Error('The location argument should not be used if you pass an object to set().');
       }
-      locations = keyOrLocations;
+      data.locations = keyOrLocations;
     } else {
       throw new Error('keyOrLocations must be a string or a mapping of key - location pairs.');
     }
 
     const newData = {};
 
-    Object.keys(locations).forEach((key) => {
+    Object.keys(data.locations).forEach((key) => {
       validateKey(key);
 
-      const location: Geopoint = locations[key];
+      const location: Geopoint | null = data.locations[key];
       if (location === null) {
         // Setting location to null is valid since it will remove the key
         newData[key] = null;
       } else {
         validateLocation(location);
-
         const geohash: string = geohashForLocation(location);
         newData[key] = encodeGeoFireObject(location, geohash);
+
+        const { customData } = data
+        if (customData) {
+          const customDataKeys = Object.keys(customData)
+          for (let i = 0, iMax = customDataKeys.length; i < iMax; i++) {
+            const cdKey = customDataKeys[i];
+            newData[key][cdKey] = customData[cdKey];
+          }
+        }
       }
     });
 

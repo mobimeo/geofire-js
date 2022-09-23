@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { GeoCallbackRegistration } from '../src';
 import {
   afterEachHelper, beforeEachHelper, Checklist,
@@ -21,7 +23,7 @@ describe('GeoFire GeoCallbackRegistration Tests:', () => {
   describe('Constructor:', () => {
     it('Constructor throws error given non-function', () => {
       const createCallbackRegistration = () => {
-        // @ts-ignore 
+        // @ts-ignore
         return new GeoCallbackRegistration('nonFunction');
       };
 
